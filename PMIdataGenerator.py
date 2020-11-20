@@ -2,6 +2,7 @@
 import os
 import sys
 from datetime import datetime
+import argparse
 
 #python PMIdataGenerator.py head
 
@@ -21,11 +22,8 @@ def get_date(line):
     date_object = datetime.strptime(date, '%m%d%Y') 
     return date_object
 
-if __name__ == '__main__':
-    #fp = open(sys.argv[1], 'r')
-    #lines = fp.readlines()
-    path = sys.argv[1]
-    for root, dirname, files in os.walk(path):
+def pmi_from_dir(dir_):
+    for root, dirname, files in os.walk(dir_):
         files = list(filter(lambda a: "icon" not in a and "html" not in a, files))
         if len(files) > 0:
             try:
@@ -43,3 +41,37 @@ if __name__ == '__main__':
                     print('{}/{} : {}'.format(donor, img, pmi))
             except:
                 pass
+
+def pmi_from_paths(paths):
+    lines = open(paths).readlines()
+    lines.sort()
+    start_time = datetime.now()
+    donor = ''
+    month = ''
+    for path in lines:
+        path = path.strip()
+        img_name = path.split('/')[-1]
+        date = get_date(img_name)
+        d = path.split('/')[-2]
+        if d != donor:
+            start_time = date
+            donor = d
+            month = img_name.split('.')[0][4:6]
+
+        diff = date - start_time
+        pmi = diff.days
+        print('{} : {}: {}'.format(path, pmi, month))
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dirname', default='', type=str)
+    parser.add_argument('--pathsfile', default='', type=str)
+    args = parser.parse_args()
+
+    dir_ = args.dirname
+    paths = args.pathsfile
+    if len(dir_) > 0:
+        pmi_from_dir(dir_)
+    elif len(paths) > 0:
+        pmi_from_paths(paths)
