@@ -1,3 +1,7 @@
 data/
 models/
 .ipynb_checkpoints/
+*h5
+bodyPartModels
+__pycache__
+*png

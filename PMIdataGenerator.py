@@ -52,7 +52,8 @@ def pmi_from_paths(paths):
         path = path.strip()
         img_name = path.split('/')[-1]
         date = get_date(img_name)
-        d = path.split('/')[-2]
+        #d = path.split('/')[-2]
+        d = img_name[:3]
         if d != donor:
             start_time = date
             donor = d
